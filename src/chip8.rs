@@ -13,8 +13,8 @@ pub struct Chip8 {
     i: u16,
     // program counter
     pc: u16,
-    graphics: Display,
-    keypad: Keypad,
+    pub display: Display,
+    pub keypad: Keypad,
 }
 
 impl Chip8 {
@@ -25,12 +25,13 @@ impl Chip8 {
             register: [0; 16],
             i: 0,
             pc: 0x200,
-            graphics: Display::new(),
+            display: Display::new(),
             keypad: Keypad::new(),
-            stack: [],
+            stack: [0; 16],
             sp: 0,
         };
-        for x in (0, 80) {
+
+        for x in 0..80 {
             chip.memory[x] = FONTSET[x];
         }
         chip
@@ -39,7 +40,5 @@ impl Chip8 {
     fn decode_op_code(&self) {}
     fn execute_op_code(&self) {}
 
-    pub fn emulate_cycle(&self) -> () {
-        println!("cycle");
-    }
+    pub fn emulate_cycle(&self) -> () {}
 }

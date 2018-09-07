@@ -8,8 +8,12 @@ pub use graphics::Display;
 
 
 fn main() {
-    let emulator = Chip8::new();
+    let mut emulator = Chip8::new();
     loop {
         emulator.emulate_cycle();
+        if emulator.display.should_draw {
+            emulator.display.draw();
+            emulator.display.should_draw = false;
+        }
     }
 }
