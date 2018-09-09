@@ -1,5 +1,5 @@
 pub struct Display {
-    screen: [[i8; 64]; 32],
+    pub screen: [[i8; 64]; 32],
     pub should_draw: bool,
 }
 
@@ -11,7 +11,7 @@ impl Display {
         }
     }
 
-    pub fn draw(&mut self) -> () {
+    pub fn draw(&mut self) {
         for row in self.screen.iter() {
             for &v in row.iter() {
                 if v == 0 {
@@ -23,5 +23,9 @@ impl Display {
             print!("\n");
         }
         print!("{}[2J", 27 as char);
+    }
+
+    pub fn clear(&mut self) {
+        self.screen = [[0; 64]; 32];
     }
 }

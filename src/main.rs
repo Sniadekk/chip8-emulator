@@ -13,11 +13,11 @@ fn main() {
     emulator.load_game("\\games\\pong.rom".to_string());
     loop {
         emulator.emulate_cycle();
-        if emulator.display.should_draw {
-            emulator.display.draw();
-            emulator.display.should_draw = false;
-        }
-        let ten_millis = time::Duration::from_millis(17);
+//        if emulator.display.should_draw {
+//            emulator.display.draw();
+//            emulator.display.should_draw = false;
+//        }
+        let ten_millis = time::Duration::from_millis(100);
         thread::sleep(ten_millis);
     }
 }
