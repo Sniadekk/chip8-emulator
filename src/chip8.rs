@@ -161,6 +161,7 @@ impl Chip8 {
     fn get_y(&self) -> u8 { ((self.opcode & 0x00F0) >> 4) as u8 }
     fn get_nibble(&self) -> u8 { (self.opcode & 0x000F) as u8 }
     fn get_byte(&self) -> u8 { (self.opcode & 0x00FF) as u8 }
+
     // A 12-bit value, the lowest 12 bits of the instruction
     fn get_addr(&self) -> u16 { (self.opcode & 0x0FFF) }
 }
