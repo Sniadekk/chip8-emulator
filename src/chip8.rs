@@ -143,12 +143,46 @@ impl Chip8 {
         self.pc = self.get_addr();
     }
 
-    pub fn op_3xxx(&mut self) {}
-    pub fn op_4xxx(&mut self) {}
-    pub fn op_5xxx(&mut self) {}
-    pub fn op_6xxx(&mut self) {}
-    pub fn op_7xxx(&mut self) {}
-    pub fn op_8xxx(&mut self) {}
+    pub fn op_3xxx(&mut self) {
+        if self.register[self.get_x()] == self.get_nibble(){
+            self.pc +=4;
+        }else{
+            self.pc +=2;
+        }
+    }
+    pub fn op_4xxx(&mut self) {
+        if self.register[self.get_x()] != self.get_nibble(){
+            self.pc +=4;
+        }else{
+            self.pc +=2;
+        }
+    }
+    pub fn op_5xxx(&mut self) {
+        if self.register[self.get_x()] == self.register[self.get_y()]{
+            self.pc +=4;
+        }else{
+            self.pc +=2;
+        }
+    }
+    pub fn op_6xxx(&mut self) {
+        self.register[self.get_x()] = self.get_nibble();
+    }
+    pub fn op_7xxx(&mut self) {
+        let x =  self.register[self.get_x()];
+        self.register[self.get_x()] = x + self.get_nibble();
+    }
+    pub fn op_8xxx(&mut self) {
+        match self.op_code & 0x000F{
+            1 =>{},
+            2 =>{},
+            3 =>{},
+            4 =>{},
+            5 =>{},
+            6 =>{},
+            7 =>{},
+            E =>{}
+        }
+    }
     pub fn op_9xxx(&mut self) {}
     pub fn op_axxx(&mut self) {}
     pub fn op_bxxx(&mut self) {}
