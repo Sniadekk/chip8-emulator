@@ -144,47 +144,77 @@ impl Chip8 {
     }
 
     pub fn op_3xxx(&mut self) {
-        if self.register[self.get_x()] == self.get_nibble(){
-            self.pc +=4;
-        }else{
-            self.pc +=2;
+        if self.register[self.get_x()] == self.get_nibble() {
+            self.pc += 4;
+        } else {
+            self.pc += 2;
         }
     }
     pub fn op_4xxx(&mut self) {
-        if self.register[self.get_x()] != self.get_nibble(){
-            self.pc +=4;
-        }else{
-            self.pc +=2;
+        if self.register[self.get_x()] != self.get_nibble() {
+            self.pc += 4;
+        } else {
+            self.pc += 2;
         }
     }
     pub fn op_5xxx(&mut self) {
-        if self.register[self.get_x()] == self.register[self.get_y()]{
-            self.pc +=4;
-        }else{
-            self.pc +=2;
+        if self.register[self.get_x()] == self.register[self.get_y()] {
+            self.pc += 4;
+        } else {
+            self.pc += 2;
         }
     }
     pub fn op_6xxx(&mut self) {
         self.register[self.get_x()] = self.get_nibble();
     }
     pub fn op_7xxx(&mut self) {
-        let x =  self.register[self.get_x()];
+        let x = self.register[self.get_x()];
         self.register[self.get_x()] = x + self.get_nibble();
     }
     pub fn op_8xxx(&mut self) {
-        match self.op_code & 0x000F{
-            1 =>{},
-            2 =>{},
-            3 =>{},
-            4 =>{},
-            5 =>{},
-            6 =>{},
-            7 =>{},
-            E =>{}
+        let vx = self.register[self.get_x()];
+        let vy = self.register[self.get_y()];
+        match self.op_code & 0x000F {
+            0x0000 => {
+                self.register[self.get_x()] = vy;
+            }
+            0x0001 => {
+                self.register[self.get_x()] = vx | vy;
+            }
+            0x0002 => {
+                self.register[self.get_x()] = vx & vy;
+            }
+            0x0003 => {
+                self.register[self.get_x()] = vx ^ vy;
+            }
+            0x0004 => {
+                self.register[self.get_x()] += vy;
+                self.register[15] = if vx < vy { 1 } else { 0 };
+            }
+            0x0005 => {
+                self.register[15] = if vx > vy { 1 } else { 0 };
+                self.register[self.get_x()] -= vy;
+            }
+            0x0006 => {
+                self.register[15] = if vx << 0 == 1 { 1 } else { 0 };
+            }
+            0x0007 => {
+                self.register[15] = if vy > vx { 1 } else { 0 };
+                self.register[self.get_x()] = vy - vx;
+            }
+            0x000E => {
+                self.register[15] = if vx << 0 == 1 { 1 } else { 0 };
+            }
         }
     }
-    pub fn op_9xxx(&mut self) {}
-    pub fn op_axxx(&mut self) {}
+    pub fn op_9xxx(&mut self) {
+        let vx = self.register[self.get_x()];
+        let vy = self.register[self.get_y()];
+        // skip next instruction if vx != vy
+        self.pc += if vx != vy { 4 } else { 2 };
+    }
+    pub fn op_axxx(&mut self) {
+    }
     pub fn op_bxxx(&mut self) {}
     pub fn op_cxxx(&mut self) {}
     pub fn op_dxxx(&mut self) {}
