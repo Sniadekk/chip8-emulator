@@ -3,6 +3,8 @@ pub mod graphics;
 pub mod keypad;
 pub mod config;
 
+extern crate rand;
+
 use chip8::Chip8;
 use std::{thread, time};
 pub use graphics::Display;

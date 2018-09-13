@@ -4,3 +4,6 @@ version = "0.1.0"
 authors = ["Sniadek <wojokarolg9@gmail.com>"]
 
 [dependencies]
+rand = "0.5.5"
+sdl2 = "0.31"
+

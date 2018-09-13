@@ -5,6 +5,7 @@ use config::FONTSET;
 use std::fs::File;
 use std::env::current_dir;
 use std::io::prelude::*;
+use rand::thread_rng;
 
 
 pub struct Chip8 {
@@ -214,9 +215,17 @@ impl Chip8 {
         self.pc += if vx != vy { 4 } else { 2 };
     }
     pub fn op_axxx(&mut self) {
+        self.i = self.get_addr() as usize;
+        self.pc += 2;
     }
-    pub fn op_bxxx(&mut self) {}
-    pub fn op_cxxx(&mut self) {}
+    pub fn op_bxxx(&mut self) {
+        self.pc = self.get_addr() + self.register[0];
+    }
+    pub fn op_cxxx(&mut self) {
+        let mut rng = thread_rng();
+        let rand = rng.gen_range(0, 255);
+        self.register[self.get_x()] = rand & self.get_byte();
+    }
     pub fn op_dxxx(&mut self) {}
     pub fn op_exxx(&mut self) {}
     pub fn op_fxxx(&mut self) {}
