@@ -5,7 +5,9 @@ use config::FONTSET;
 use std::fs::File;
 use std::env::current_dir;
 use std::io::prelude::*;
+use rand::Rng;
 use rand::thread_rng;
+
 
 
 pub struct Chip8 {
@@ -18,7 +20,7 @@ pub struct Chip8 {
     // index counter
     i: usize,
     // program counter
-    pc: u16,
+    pc: usize,
     pub display: Display,
     pub keypad: Keypad,
 }
@@ -120,6 +122,7 @@ impl Chip8 {
             0xF000 => {
                 self.op_fxxx()
             }
+            _ => unreachable!()
         }
     }
 
@@ -133,15 +136,15 @@ impl Chip8 {
     }
 
     pub fn op_1xxx(&mut self) {
-        self.stack[self.sp] = self.pc;
+        self.stack[self.sp] = self.pc as u16;
         self.sp += 1;
-        self.pc = self.get_addr();
+        self.pc = self.get_addr() as usize;
     }
 
     pub fn op_2xxx(&mut self) {
         self.sp += 1;
-        self.stack[self.sp] = self.pc;
-        self.pc = self.get_addr();
+        self.stack[self.sp] = self.pc as u16;
+        self.pc = self.get_addr() as usize;
     }
 
     pub fn op_3xxx(&mut self) {
@@ -206,6 +209,7 @@ impl Chip8 {
             0x000E => {
                 self.register[15] = if vx << 0 == 1 { 1 } else { 0 };
             }
+            _ => unreachable!()
         }
     }
     pub fn op_9xxx(&mut self) {
@@ -219,7 +223,7 @@ impl Chip8 {
         self.pc += 2;
     }
     pub fn op_bxxx(&mut self) {
-        self.pc = self.get_addr() + self.register[0];
+        self.pc = (self.get_addr() + self.register[0] as u16) as usize;
     }
     pub fn op_cxxx(&mut self) {
         let mut rng = thread_rng();
@@ -230,11 +234,11 @@ impl Chip8 {
     pub fn op_exxx(&mut self) {}
     pub fn op_fxxx(&mut self) {}
 
-    fn get_x(&self) -> u8 { ((self.opcode & 0x0F00) >> 8) as u8 }
-    fn get_y(&self) -> u8 { ((self.opcode & 0x00F0) >> 4) as u8 }
-    fn get_nibble(&self) -> u8 { (self.opcode & 0x000F) as u8 }
-    fn get_byte(&self) -> u8 { (self.opcode & 0x00FF) as u8 }
+    fn get_x(&self) -> usize { ((self.op_code & 0x0F00) >> 8) as usize }
+    fn get_y(&self) -> usize { ((self.op_code & 0x00F0) >> 4) as usize }
+    fn get_nibble(&self) -> u8 { (self.op_code & 0x000F) as u8 }
+    fn get_byte(&self) -> u8 { (self.op_code & 0x00FF) as u8 }
 
     // A 12-bit value, the lowest 12 bits of the instruction
-    fn get_addr(&self) -> u16 { (self.opcode & 0x0FFF) }
+    fn get_addr(&self) -> u16 { (self.op_code & 0x0FFF) }
 }
