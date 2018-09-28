@@ -230,7 +230,10 @@ impl Chip8 {
         let rand = rng.gen_range(0, 255);
         self.register[self.get_x()] = rand & self.get_byte();
     }
-    pub fn op_dxxx(&mut self) {}
+    pub fn op_dxxx(&mut self) {
+        let from = self.i;
+        let to = from + (self.get_nibble() as usize);
+    }
     pub fn op_exxx(&mut self) {}
     pub fn op_fxxx(&mut self) {}
 
