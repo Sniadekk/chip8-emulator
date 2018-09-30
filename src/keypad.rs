@@ -26,6 +26,7 @@ impl Keypad {
             Keycode::D => {},
             Keycode::E => {},
             Keycode::F => {},
+            _ => ()
         }
     }
 }

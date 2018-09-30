@@ -1,6 +1,8 @@
 use graphics::Display;
 use keypad::Keypad;
 use config::FONTSET;
+use sdl2::render::Canvas;
+use sdl2::video::Window;
 
 use std::fs::File;
 use std::env::current_dir;
@@ -26,7 +28,7 @@ pub struct Chip8 {
 }
 
 impl Chip8 {
-    pub fn new() -> Self {
+    pub fn new(canvas:Canvas<Window>) -> Self {
         let mut chip: Chip8 = Chip8 {
             op_code: 0,
             memory: [0; 4096],
@@ -35,7 +37,7 @@ impl Chip8 {
             i: 0,
             // program counter
             pc: 0x200,
-            display: Display::new(),
+            display: Display::new(canvas),
             keypad: Keypad::new(),
             stack: [0; 16],
             // stack pointer
@@ -233,15 +235,22 @@ impl Chip8 {
     pub fn op_dxxx(&mut self) {
         let from = self.i;
         let to = from + (self.get_nibble() as usize);
+        let sprite = &self.memory[from .. to];
+        let x = self.v[self.get_x()];
+        let y = self.v[self.get_y()];
+        self.display.draw_sprite(x,y,sprite);
+
     }
     pub fn op_exxx(&mut self) {}
     pub fn op_fxxx(&mut self) {}
-
+    // A 4-bit value, the lower 4 bits of the high byte of the instruction
     fn get_x(&self) -> usize { ((self.op_code & 0x0F00) >> 8) as usize }
+    // A 4-bit value, the upper 4 bits of the low byte of the instruction
     fn get_y(&self) -> usize { ((self.op_code & 0x00F0) >> 4) as usize }
+    // A 4-bit value, the lowest 4 bits of the instruction
     fn get_nibble(&self) -> u8 { (self.op_code & 0x000F) as u8 }
+    // An 8-bit value, the lowest 8 bits of the instruction
     fn get_byte(&self) -> u8 { (self.op_code & 0x00FF) as u8 }
-
     // A 12-bit value, the lowest 12 bits of the instruction
     fn get_addr(&self) -> u16 { (self.op_code & 0x0FFF) }
 }
